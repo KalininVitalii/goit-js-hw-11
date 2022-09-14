@@ -69,10 +69,10 @@ function renderImageList(images) {
                 <b>Views</b> ${image.views}</span>  
             </p>
             <p class="info-item">
-                <b>Comments</b>${image.comments}</span>  
+                <b>Comments</b> ${image.comments}</span>  
             </p>
             <p class="info-item">
-                <b>Downloads</b>${image.downloads}</span> 
+                <b>Downloads</b> ${image.downloads}</span> 
             </p>
         </div>
     </div>`;
