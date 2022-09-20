@@ -1,15 +1,12 @@
 import axios from 'axios';
 
 const API_KEY = '29924264-5d5e566662b34a1c46cf6af93';
-const BASE_URL = 'https://pixabay.com/api';
+const BASE_URL = 'https://pixabay.com/api/';
 
 export default class NewsApiService {
   constructor() {
     this.searchQuery = '';
     this.page = 1;
-    if (this.page === undefined) {
-      return;
-    }
   }
 
   fetchImages() {
