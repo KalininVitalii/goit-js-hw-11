@@ -42,7 +42,7 @@ function fetchImages() {
       if (data.totalHits > 0) {
         Notify.success(`Hooray! We found ${data.totalHits} images.`);
         renderImageList(data.hits);
-        gallerySimpleLightbox.refresh();
+        // gallerySimpleLightbox.refresh();
         refs.btnLoadMore.style.display = 'block';
       }
 
