@@ -8,6 +8,7 @@ const refs = {
   gallery: document.querySelector('.gallery'),
   btnLoadMore: document.querySelector('.load-more'),
 };
+
 let gallerySimpleLightbox = new SimpleLightbox('.gallery a');
 refs.btnLoadMore.style.display = 'none';
 refs.searchForm.addEventListener('submit', onSearch);
