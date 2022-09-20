@@ -30,33 +30,31 @@ function onSearch(event) {
 }
 
 function fetchImages() {
-  newsApiService.fetchImages().then(data => {
-    if (data.hits.length === 0) {
-      return Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
+  newsApiService
+    .fetchImages()
+    .then(data => {
+      if (data.hits.length === 0) {
+        refs.btnLoadMore.style.display = 'none';
+        return Notify.failure(
+          "We're sorry, but you've reached the end of search results."
+        );
+      }
 
-    if (data.totalHits > 0) {
-      Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      renderImageList(data.hits);
-      gallerySimpleLightbox.refresh();
-      refs.btnLoadMore.style.display = 'block';
-    }
+      if (data.totalHits > 0) {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        renderImageList(data.hits);
+        gallerySimpleLightbox.refresh();
+        refs.btnLoadMore.style.display = 'block';
+      }
 
-    if (data.totalHits % this.page < 40) {
-      Notify.info("We're sorry, but you've reached the end of search results.");
-      refs.btnLoadMore.style.display = 'none';
-    }
-
-    // renderImageList(data.hits);
-  });
-  // .catch(onFetchError);
+      // renderImageList(data.hits);
+    })
+    .catch(onFetchError);
 }
 
-// function onFetchError(error) {
-//   Notify.failure(error.message);
-// }
+function onFetchError(error) {
+  Notify.failure(error.message);
+}
 
 function renderImageList(images) {
   const markup = images
