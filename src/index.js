@@ -1,88 +1,94 @@
-import { fetchImages } from './api';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import NewsApiService from './api';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const input = document.querySelector('.search-form-input');
-const btnSearch = document.querySelector('.search-form-button');
-const gallery = document.querySelector('.gallery');
-const btnLoadMore = document.querySelector('.load-more');
+const refs = {
+  searchForm: document.querySelector('#search-form'),
+  gallery: document.querySelector('.gallery'),
+  btnLoadMore: document.querySelector('.load-more'),
+};
 let gallerySimpleLightbox = new SimpleLightbox('.gallery a');
+refs.btnLoadMore.style.display = 'none';
+refs.searchForm.addEventListener('submit', onSearch);
+refs.btnLoadMore.addEventListener('click', fetchImages);
 
-btnLoadMore.style.display = 'none';
+const newsApiService = new NewsApiService();
 
-let pageNumber = 1;
+function onSearch(event) {
+  event.preventDefault();
+  newsApiService.query = event.currentTarget.elements.searchQuery.value;
 
-btnSearch.addEventListener('click', e => {
-  e.preventDefault();
-  cleanGallery();
-  const trimmedValue = input.value.trim();
-  if (trimmedValue !== '') {
-    fetchImages(trimmedValue, pageNumber).then(foundData => {
-      if (foundData.hits.length === 0) {
-        Notiflix.Notify.failure(
+  if (newsApiService.query === '') {
+    return Notify.failure('Sorry, enter a valid query. Please try again.');
+  }
+  gallerySimpleLightbox.refresh();
+  newsApiService.resetPage();
+  clearGallery();
+  fetchImages();
+}
+
+function fetchImages() {
+  newsApiService
+    .fetchImages()
+    .then(data => {
+      if (data.hits.length === 0) {
+        return Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
-      } else {
-        renderImageList(foundData.hits);
-        Notiflix.Notify.success(
-          `Hooray! We found ${foundData.totalHits} images.`
-        );
-        btnLoadMore.style.display = 'block';
-        gallerySimpleLightbox.refresh();
       }
-    });
-  }
-});
 
-btnLoadMore.addEventListener('click', () => {
-  pageNumber++;
-  const trimmedValue = input.value.trim();
-  btnLoadMore.style.display = 'none';
-  fetchImages(trimmedValue, pageNumber).then(foundData => {
-    if (foundData.hits.length === 0) {
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    } else {
-      renderImageList(foundData.hits);
-      Notiflix.Notify.success(
-        `Hooray! We found ${foundData.totalHits} images.`
-      );
-      btnLoadMore.style.display = 'block';
-    }
-  });
-});
+      if (data.totalHits > 0) {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        renderImageList(data.hits);
+        gallerySimpleLightbox.refresh();
+        refs.btnLoadMore.style.display = 'block';
+      }
+
+      if (data.totalHits % this.page < 40) {
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+        refs.btnLoadMore.style.display = 'none';
+      }
+
+      // renderImageList(data.hits);
+    })
+    .catch(onFetchError);
+}
+
+function onFetchError(error) {
+  Notify.failure(error.message);
+}
 
 function renderImageList(images) {
-  console.log(images, 'images');
   const markup = images
     .map(image => {
       console.log('img', image);
-      return `<div class="photo-card">
-       <a href="${image.largeImageURL}"><img  src="${image.webformatURL}" alt="${image.tags}" title="${image.tags}" /></a>
+      return `<div class="photo-card ">
+       <a href="${image.largeImageURL}"><img  src="${image.webformatURL}" alt="${image.tags}" title="${image.tags}" class="photo-img"/></a>
         <div class="info">
            <p class="info-item">
-    <b>Likes</b> ${image.likes} </span>
+    <b>Likes</b><br> ${image.likes} </span>
 </p>
             <p class="info-item">
-                <b>Views</b> ${image.views}</span>  
+                <b>Views</b><br> ${image.views}</span>
             </p>
             <p class="info-item">
-                <b>Comments</b> ${image.comments}</span>  
+                <b>Comments</b><br> ${image.comments}</span>
             </p>
             <p class="info-item">
-                <b>Downloads</b> ${image.downloads}</span> 
+                <b>Downloads</b><br> ${image.downloads}</span>
             </p>
         </div>
     </div>`;
     })
     .join('');
-  gallery.innerHTML += markup;
+  refs.gallery.innerHTML += markup;
 }
 
-function cleanGallery() {
-  gallery.innerHTML = '';
+function clearGallery() {
+  refs.gallery.innerHTML = '';
   pageNumber = 1;
-  btnLoadMore.style.display = 'none';
+  refs.btnLoadMore.style.display = 'none';
 }

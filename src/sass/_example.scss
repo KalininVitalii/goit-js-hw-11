@@ -26,3 +26,55 @@
   background-size: cover;
   background-position: center;
 }
+body {
+  color: black;
+  font-size: 14px;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gallery {
+  display: flex;
+      width: 1400px;
+      text-align: center;
+      flex-wrap: wrap;
+      gap: 20px;
+          padding-left: 15px;
+            padding-right: 15px;
+            margin: auto;
+}
+
+.info{
+  width: 327px;
+}
+
+        
+.photo-img {
+
+      width: 327px;
+      height: 220px;
+      object-fit: cover;
+        text-decoration: none;
+        display: block;
+}
+
+.info {
+      text-align: center;
+        padding: 10px 5px;
+        display: flex;
+        align-items: center;
+          gap: 20px;
+          justify-content: center;
+}
+.search-toolbar{
+  text-align: center;
+  margin: 40px;
+}
+button.load-more{
+  text-align: center;
+    margin: 40px;
+    margin: 0 auto 20px;
+      display: block;
+      padding: 10px 20px;
+}
