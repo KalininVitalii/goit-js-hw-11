@@ -89,6 +89,5 @@ function renderImageList(images) {
 
 function clearGallery() {
   refs.gallery.innerHTML = '';
-  pageNumber = 1;
   refs.btnLoadMore.style.display = 'none';
 }
